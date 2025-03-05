@@ -1,0 +1,1 @@
+//A user can create a watchlist, to know what he should rent next when he gets paid.
