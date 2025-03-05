@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/auth.js";
-//import movieRoutes from "./routes/movies.js";
+import movieRoutes from "./routes/movies.js";
 import rentalRoutes from "./routes/rentals.js";
 //import reviewRoutes from "./routes/reviews.js";
 //import transactionRoutes from "./routes/transactions.js";
@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
-//app.use("/movies", movieRoutes);
+app.use("/movies", movieRoutes);
 app.use("/rentals", rentalRoutes);
 //app.use("/reviews", reviewRoutes);
 //app.use("/transactions", transactionRoutes);
