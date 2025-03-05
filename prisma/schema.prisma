@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  role      Role    @default(USER)
+  createdAt DateTime @default(now())
+
+  rentals     Rental[]
+  reviews     Review[]
+  transactions Transaction[]
+  watchlist   Watchlist[]
+}
+
+model Movie {
+  id             Int     @id @default(autoincrement())
+  title          String  @unique
+  description    String
+  releaseYear    Int
+  posterUrl      String
+  rentalPrice    Float
+  availableCopies Int
+
+  rentals   Rental[]
+  reviews   Review[]
+  watchlist Watchlist[]
+}
+
+model Rental {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  movieId    Int
+  rentalDate DateTime @default(now())
+  returnDate DateTime?
+  status     RentalStatus @default(RENTED)
+
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  movieId   Int
+  rating    Int     @default(1) @db.Integer
+  reviewText String?
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+}
+
+model Transaction {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  amount     Float
+  transactionDate DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Watchlist {
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  movieId  Int
+  addedAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum RentalStatus {
+  RENTED
+  RETURNED
+}
