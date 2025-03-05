@@ -25,7 +25,7 @@ model Movie {
   title          String  @unique
   description    String
   releaseYear    Int
-  posterUrl      String
+  posterUrl      String?
   rentalPrice    Float
   availableCopies Int
 
