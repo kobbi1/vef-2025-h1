@@ -9,7 +9,7 @@ Omar Altabbaa
 ## Installation
 
 ```bash
-npm install
+npm install --force
 ```
 
 ## Usage
@@ -80,3 +80,39 @@ PUT request: http://localhost:5050/rentals/1/return
 DELETE request: http://localhost:5050/rentals/1
 
 ```
+
+### Adding, Updating and Deleting movies
+
+**Add Movie**
+```bash
+POST request: http://localhost:5050/movies
+Must use admin login and get token, go to authorization and select Bearer Token
+Go to body and use form data
+
+Key             |   Type   | Value
+============================================================================
+title           |   Text   | The Shawshank Redemption
+description     |   Text   | A banker convicted of...
+releaseYear     |   Text   | 1994
+poster          |   File   | Upload this from your PC (MUST BE JPEG OR PNG)
+rentalPrice     |   Text   | 1000
+availableCopies |   Text   | 10
+
+```
+
+**Delete Movie**
+```bash
+Must use admin login and get token, go to authorization and select Bearer Token
+
+DELETE request: http://localhost:5050/movies/5
+```
+
+**Update Movie**
+```bash
+Must use admin login and get token, go to authorization and select Bearer Token
+
+PUT request: http://localhost:5050/movies/1
+
+{
+    "description": "Very cool very nice, works yes yes"
+}

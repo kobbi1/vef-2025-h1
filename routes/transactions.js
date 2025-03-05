@@ -1,0 +1,1 @@
+//Admin can see transactions, total, and data from the website sales

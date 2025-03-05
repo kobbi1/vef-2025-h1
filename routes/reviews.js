@@ -1,0 +1,1 @@
+//A renter can review a movie that he already rented
