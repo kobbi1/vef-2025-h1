@@ -22,7 +22,7 @@ app.use("/rentals", rentalRoutes);
 //app.use("/watchlist", watchlistRoutes);
 
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to the Movie Rental API", endpoints: ["/auth", "/movies", "/rentals", "/reviews", "/transactions", "/watchlist"] });
+    res.json({ message: "Welcome to the Movie Rental API, Keep in mind\n Keep in mind, there are no GET endpoints for auth\n Look at the Github readme on how to create,update and remove rentals/movies", endpoints: ["/auth/register", "/auth/login", "/movies","/movies/1", "/rentals","/rentals/user/1"] });
 });
 
 const PORT = process.env.PORT || 5050;
