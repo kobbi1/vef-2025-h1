@@ -37,13 +37,15 @@ router.post("/login", async (req, res) => {
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
-            return res.status(401).json({ error: "Invalid credentials" });
+            res.status(401).json({ error: "Invalid credentials" });
+            return
         }
 
         // Compare passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ error: "Invalid credentials" });
+            res.status(401).json({ error: "Invalid credentials" });
+            return
         }
 
         // Generate JWT token
@@ -54,11 +56,13 @@ router.post("/login", async (req, res) => {
         );
         
 
-        return res.json({ token });
+        res.json({ token });
+        return
 
     } catch (error) {
         console.error("Login error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
+        return
     }
 });
 
