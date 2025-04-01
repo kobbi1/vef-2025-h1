@@ -11,19 +11,35 @@ const prisma = new PrismaClient();
  */
 router.get("/", async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const pageSize = 10;
-        const movies = await prisma.movie.findMany({
-            skip: (page - 1) * pageSize,
-            take: pageSize
-        });
-
-        return res.json(movies);
+      const page = req.query.page ? parseInt(req.query.page, 10) : 1;
+      const pageSize = 10;
+  
+      const [movies, totalCount] = await Promise.all([
+        prisma.movie.findMany({
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        }),
+        prisma.movie.count(),
+      ]);
+  
+      const totalPages = Math.ceil(totalCount / pageSize);
+  
+      // ✅ This is the correct shape your frontend expects
+      return res.json({
+        data: movies,
+        meta: {
+          page,
+          totalPages,
+          pageSize,
+          totalCount,
+        },
+      });
     } catch (error) {
-        console.error("Error fetching movies:", error);
-        return res.status(500).json({ error: "Internal server error" });
+      console.error("Error fetching movies:", error);
+      return res.status(500).json({ error: "Internal server error" });
     }
-});
+  });
+  
 
 /**
  * Get a single movie by ID
