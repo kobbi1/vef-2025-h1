@@ -40,6 +40,18 @@ router.get("/", async (req, res) => {
     }
   });
   
+  /**
+   * Get all movies
+   */
+  router.get("/all", async (req, res) => {
+    try {
+      const movies = await prisma.movie.findMany();
+      res.json(movies);
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+  
 
 /**
  * Get a single movie by ID
@@ -97,21 +109,47 @@ router.post("/", authenticate, isAdmin, upload.single("poster"), async (req, res
  */
 router.put("/:id", authenticate, isAdmin, upload.single("poster"), async (req, res) => {
     try {
-        const { title, description, releaseYear, rentalPrice, availableCopies } = req.body;
-
-        const posterUrl = req.file ? req.file.path : undefined;
-
-        const updatedMovie = await prisma.movie.update({
-            where: { id: parseInt(req.params.id) },
-            data: { title, description, releaseYear, posterUrl, rentalPrice, availableCopies }
-        });
-
-        return res.json(updatedMovie);
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid movie ID" });
+      }
+  
+      const {
+        title,
+        description,
+        releaseYear,
+        rentalPrice,
+        availableCopies,
+      } = req.body;
+  
+      // Safely parse numeric values (only if present)
+      const parsedReleaseYear = releaseYear ? parseInt(releaseYear, 10) : undefined;
+      const parsedRentalPrice = rentalPrice ? parseFloat(rentalPrice) : undefined;
+      const parsedAvailableCopies = availableCopies ? parseInt(availableCopies, 10) : undefined;
+  
+      const posterUrl = req.file ? req.file.path : undefined;
+  
+      // Only include fields that are defined
+      const updateData = {
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(parsedReleaseYear && { releaseYear: parsedReleaseYear }),
+        ...(parsedRentalPrice && { rentalPrice: parsedRentalPrice }),
+        ...(parsedAvailableCopies && { availableCopies: parsedAvailableCopies }),
+        ...(posterUrl && { posterUrl }),
+      };
+  
+      const updatedMovie = await prisma.movie.update({
+        where: { id },
+        data: updateData,
+      });
+  
+      return res.json(updatedMovie);
     } catch (error) {
-        console.error("Error updating movie:", error);
-        return res.status(404).json({ error: "Movie not found" });
+      console.error("Error updating movie:", error);
+      return res.status(500).json({ error: "Internal server error" });
     }
-});
+  });  
 
 /**
  *  Delete a movie (Admin only)
@@ -128,5 +166,6 @@ router.delete("/:id", authenticate, isAdmin, async (req, res) => {
         return res.status(404).json({ error: "Movie not found" });
     }
 });
+
 
 export default router;
